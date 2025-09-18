@@ -1,78 +1,374 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8"/>
-  <script src="management.js" type="application/javascript" defer=""></script>
-  <style type="text/css">
-    :root {
-      font: message-box;
-      color: #0c0c0d;
-    }
-    body {
-      font-size: 1.1em;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-    h1 {
-      font-weight: 600;
-      font-size: 1.25em;
-      margin-top: 0;
-      margin-bottom: 0.5em;
-    }
-    h2 {
-      font-weight: 600;
-      font-size: 1.1em;
-      margin: 0.5em 0;
-    }
-    p {
-      margin: 0.5em 0;
-    }
-    input {
-      width: 100%;
-      box-sizing: border-box;
-    }
+    <head>
+        <meta charset="utf-8" />
+        <script
+            src="management.js"
+            type="application/javascript"
+            defer=""
+        ></script>
+        <style type="text/css">
+            :root {
+                --primary-color: #0060df;
+                --primary-hover: #003eaa;
+                --success-color: #30e60b;
+                --warning-color: #ff9500;
+                --error-color: #d70022;
+                --text-color: #0c0c0d;
+                --text-secondary: #737373;
+                --bg-color: #ffffff;
+                --bg-secondary: #f9f9fb;
+                --border-color: #d7d7db;
+                --border-radius: 8px;
+                --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+            }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        color: #fff;
-      }
-    }
-  </style>
-</head>
-<body>
-  <form>
-    <h1>S3</h1>
-    <ul>
-      <li>
-        <label>
-          <h2>Endpoint</h2>
-          <input type="text" name="endpoint" required="true" placeholder="s3.us-east-2.amazonaws.com" />
-        </label>
-        <label>
-          <h2>Region</h2>
-          <input type="text" name="region" required="false" placeholder="us-east-2" />
-        </label>
-        <label>
-          <h2>Bucket</h2>
-          <input type="text" name="bucket" required="true" placeholder="mail-attachments" />
-        </label>
-        <label>
-          <h2>Prefix</h2>
-          <input type="text" name="prefix" required="true" placeholder="uploads/" />
-        </label>
-        <label>
-          <h2>Access Key</h2>
-          <input type="password" name="access_key" required="true" />
-        </label>
-        <label>
-          <h2>Secret Key</h2>
-          <input type="password" name="secret_key" required="true" />
-        </label>
-      </li>
-    </ul>
-    <div style="text-align: right"><button type="button" name="save" data-i18n="save">Save</button></div>
-  </form>
-</body>
+            @media (prefers-color-scheme: dark) {
+                :root {
+                    --text-color: #ffffff;
+                    --text-secondary: #b1b1b3;
+                    --bg-color: #2a2a2e;
+                    --bg-secondary: #38383d;
+                    --border-color: #52525e;
+                    --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+                }
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: var(--font-family);
+                font-size: 14px;
+                line-height: 1.5;
+                color: var(--text-color);
+                background: var(--bg-color);
+                margin: 0;
+                padding: 20px;
+            }
+
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+                background: var(--bg-color);
+                border-radius: var(--border-radius);
+                box-shadow: var(--shadow);
+                padding: 0;
+                overflow: hidden;
+            }
+
+            .header {
+                background: var(--primary-color);
+                color: white;
+                padding: 20px 24px;
+                text-align: center;
+            }
+
+            .header h1 {
+                margin: 0;
+                font-size: 24px;
+                font-weight: 600;
+            }
+
+            .header p {
+                margin: 8px 0 0 0;
+                opacity: 0.9;
+                font-size: 14px;
+            }
+
+            .form-content {
+                padding: 24px;
+            }
+
+            .form-section {
+                margin-bottom: 24px;
+            }
+
+            .section-title {
+                font-size: 16px;
+                font-weight: 600;
+                color: var(--text-color);
+                margin: 0 0 16px 0;
+                padding-bottom: 8px;
+                border-bottom: 2px solid var(--border-color);
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            .form-group label {
+                display: block;
+                font-weight: 500;
+                color: var(--text-color);
+                margin-bottom: 6px;
+                font-size: 14px;
+            }
+
+            .form-group .help-text {
+                font-size: 12px;
+                color: var(--text-secondary);
+                margin-top: 4px;
+                line-height: 1.4;
+            }
+
+            .form-group input {
+                width: 100%;
+                padding: 12px 16px;
+                border: 2px solid var(--border-color);
+                border-radius: var(--border-radius);
+                font-size: 14px;
+                background: var(--bg-color);
+                color: var(--text-color);
+                transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            }
+
+            .form-group input:focus {
+                outline: none;
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 3px rgba(0, 96, 223, 0.1);
+            }
+
+            .form-group input::placeholder {
+                color: var(--text-secondary);
+            }
+
+            .form-actions {
+                background: var(--bg-secondary);
+                padding: 20px 24px;
+                border-top: 1px solid var(--border-color);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .btn {
+                padding: 12px 24px;
+                border: none;
+                border-radius: var(--border-radius);
+                font-size: 14px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .btn-primary {
+                background: var(--primary-color);
+                color: white;
+            }
+
+            .btn-primary:hover:not(:disabled) {
+                background: var(--primary-hover);
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(0, 96, 223, 0.3);
+            }
+
+            .btn:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+                transform: none !important;
+                box-shadow: none !important;
+            }
+
+            .status-message {
+                padding: 12px 16px;
+                border-radius: var(--border-radius);
+                margin-bottom: 20px;
+                font-size: 14px;
+                display: none;
+            }
+
+            .status-success {
+                background: rgba(48, 230, 11, 0.1);
+                border: 2px solid var(--success-color);
+                color: var(--success-color);
+            }
+
+            .status-error {
+                background: rgba(215, 0, 34, 0.1);
+                border: 2px solid var(--error-color);
+                color: var(--error-color);
+            }
+
+            .required-asterisk {
+                color: var(--error-color);
+                margin-left: 4px;
+            }
+
+            .grid-2 {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+            }
+
+            @media (max-width: 480px) {
+                body {
+                    padding: 12px;
+                }
+
+                .container {
+                    border-radius: 0;
+                    box-shadow: none;
+                }
+
+                .grid-2 {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1 data-i18n="extensionName">S3 FileLink Provider</h1>
+                <p>
+                    Configure your S3-compatible storage for Thunderbird file
+                    attachments
+                </p>
+            </div>
+
+            <form>
+                <div class="form-content">
+                    <div id="statusMessage" class="status-message"></div>
+
+                    <div class="form-section">
+                        <h2 class="section-title">🌐 Connection Settings</h2>
+
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="endpoint">
+                                    Endpoint
+                                    <span class="required-asterisk">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="endpoint"
+                                    name="endpoint"
+                                    required
+                                    placeholder="s3.us-east-2.amazonaws.com"
+                                />
+                                <div class="help-text">
+                                    S3 endpoint URL (without https://)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="region"> Region </label>
+                                <input
+                                    type="text"
+                                    id="region"
+                                    name="region"
+                                    placeholder="us-east-2"
+                                />
+                                <div class="help-text">
+                                    AWS region code (optional for some
+                                    providers)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2 class="section-title">🗂️ Storage Settings</h2>
+
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="bucket">
+                                    Bucket Name
+                                    <span class="required-asterisk">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="bucket"
+                                    name="bucket"
+                                    required
+                                    placeholder="my-email-attachments"
+                                />
+                                <div class="help-text">
+                                    S3 bucket where files will be stored
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="prefix">
+                                    Folder Prefix
+                                    <span class="required-asterisk">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="prefix"
+                                    name="prefix"
+                                    required
+                                    placeholder="thunderbird-uploads/"
+                                />
+                                <div class="help-text">
+                                    Folder path prefix for organizing files
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2 class="section-title">🔐 Authentication</h2>
+
+                        <div class="form-group">
+                            <label for="access_key">
+                                Access Key
+                                <span class="required-asterisk">*</span>
+                            </label>
+                            <input
+                                type="password"
+                                id="access_key"
+                                name="access_key"
+                                required
+                                placeholder="Your S3 access key"
+                            />
+                            <div class="help-text">
+                                S3 access key ID (will be stored securely)
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="secret_key">
+                                Secret Key
+                                <span class="required-asterisk">*</span>
+                            </label>
+                            <input
+                                type="password"
+                                id="secret_key"
+                                name="secret_key"
+                                required
+                                placeholder="Your S3 secret key"
+                            />
+                            <div class="help-text">
+                                S3 secret access key (will be stored securely)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <div class="help-text">
+                        <strong>Note:</strong> All credentials are stored
+                        locally in Thunderbird
+                    </div>
+                    <button
+                        type="button"
+                        name="save"
+                        class="btn btn-primary"
+                        data-i18n="save"
+                    >
+                        💾 Save Configuration
+                    </button>
+                </div>
+            </form>
+        </div>
+    </body>
 </html>

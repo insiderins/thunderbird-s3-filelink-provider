@@ -1,23 +1,29 @@
 {
+  "manifest_version": 2,
   "name": "__MSG_extensionName__",
   "description": "__MSG_extensionDescription__",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "author": "Joseph Chris",
+  "homepage_url": "https://github.com/baobao1270/thunderbird-s3-filelink-provider",
+  "default_locale": "en",
   "applications": {
     "gecko": {
       "id": "s3-filelink-provider-developer@josephcz.xyz",
-      "strict_min_version": "91.0"
+      "strict_min_version": "91.0",
+      "strict_max_version": "*"
     }
   },
   "icons": {
     "16": "icon.svg",
     "32": "icon.svg",
-    "48": "icon.svg"
+    "48": "icon.svg",
+    "64": "icon.svg"
   },
   "background": {
     "scripts": [
       "background.js"
-    ]
+    ],
+    "persistent": true
   },
   "cloud_file": {
     "name": "__MSG_serviceName__",
@@ -26,7 +32,5 @@
   "permissions": [
     "<all_urls>",
     "storage"
-  ],
-  "default_locale": "en",
-  "manifest_version": 2
+  ]
 }
